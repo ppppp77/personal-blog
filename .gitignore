@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Windows
+desktop.ini
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/

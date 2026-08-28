@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英语六级学习助手</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">📚 英语六级学习助手</div>
+    <nav>
+      <button class="active" data-view="flashcard">单词卡片</button>
+      <button data-view="quiz">选择题测验</button>
+      <button data-view="spelling">拼写练习</button>
+      <button data-view="progress">学习进度</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== 单词卡片 ===== -->
+    <section id="view-flashcard" class="view active">
+      <div class="fc-toolbar">
+        <select id="fc-filter">
+          <option value="all">全部词汇</option>
+          <option value="cet4">四级基础词</option>
+          <option value="cet6">六级进阶词</option>
+        </select>
+        <select id="fc-mode">
+          <option value="smart">智能排序（先复习薄弱词）</option>
+          <option value="random">随机顺序</option>
+        </select>
+        <button class="btn ghost" id="fc-shuffle">🔀 洗牌</button>
+      </div>
+
+      <div class="fc-scene">
+        <div class="fc-card" id="fc-card">
+          <div class="fc-face front">
+            <span class="fc-status-chip" id="fc-chip">＋ 新词</span>
+            <div class="fc-word" id="fc-word">word</div>
+            <div class="phonetic" id="fc-phonetic">/fəˈnetɪk/</div>
+            <button class="btn ghost small" id="fc-speak">🔊 发音</button>
+          </div>
+          <div class="fc-face back">
+            <div class="fc-meaning" id="fc-meaning"></div>
+            <div class="fc-example" id="fc-example"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fc-actions">
+        <button class="btn ghost" id="fc-prev">← 上一个</button>
+        <button class="btn success" id="fc-know">认识了 ✓</button>
+        <button class="btn danger" id="fc-again">再看看 ✗</button>
+        <button class="btn ghost" id="fc-next">下一个 →</button>
+      </div>
+
+      <div class="fc-progress"><div class="fc-progress-inner" id="fc-progress-bar" style="width:0%"></div></div>
+      <div class="fc-meta" id="fc-meta"></div>
+      <p class="fc-hint">点击卡片翻面 · 空格键翻面 · ←/→ 键切换</p>
+    </section>
+
+    <!-- ===== 选择题测验 ===== -->
+    <section id="view-quiz" class="view">
+      <div class="card" id="quiz-intro">
+        <h2>选择题测验</h2>
+        <p style="color:var(--muted);margin:12px 0 20px;">
+          每轮 10 题，包含英译中、中译英、例句填空三种题型。错题本中的单词会被优先抽考。
+          答题时可用键盘 1-4 快速选择。
+        </p>
+        <button class="btn" id="quiz-begin">开始测验 →</button>
+      </div>
+
+      <div class="card" id="quiz-play" hidden>
+        <div class="quiz-top">
+          <span class="quiz-count" id="quiz-count"></span>
+          <span class="quiz-score" id="quiz-score"></span>
+        </div>
+        <span class="quiz-type" id="quiz-type"></span>
+        <div class="quiz-question" id="quiz-question"></div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-feedback" id="quiz-feedback" hidden></div>
+        <button class="btn quiz-next" id="quiz-next" hidden>下一题</button>
+      </div>
+
+      <div class="card quiz-result" id="quiz-result" hidden>
+        <h2>测验完成！</h2>
+        <div class="quiz-final" id="quiz-final"></div>
+        <div class="quiz-comment" id="quiz-comment"></div>
+        <h3 style="text-align:left;font-size:15px;">错题回顾</h3>
+        <ul class="quiz-wrong-list" id="quiz-wrong-list"></ul>
+        <button class="btn" id="quiz-restart">再来一轮 🔁</button>
+      </div>
+    </section>
+
+    <!-- ===== 拼写练习 ===== -->
+    <section id="view-spelling" class="view">
+      <div class="card">
+        <div class="spell-meaning" id="sp-meaning"></div>
+        <div class="spell-letters" id="sp-letters"></div>
+        <div class="spell-row">
+          <input id="sp-input" type="text" autocomplete="off" autocapitalize="off"
+                 spellcheck="false" placeholder="输入你听到的单词…">
+          <button class="btn ghost" id="sp-speak">🔊 再听一遍</button>
+          <button class="btn ghost" id="sp-hint-btn">💡 提示</button>
+        </div>
+        <div class="spell-hint" id="sp-hint"></div>
+        <div class="spell-row">
+          <button class="btn" id="sp-check">检查答案</button>
+          <button class="btn success" id="sp-next" hidden>下一个 →</button>
+        </div>
+        <div class="spell-result" id="sp-result" hidden></div>
+        <div class="spell-example" id="sp-example-wrap" hidden>
+          <span id="sp-example"></span>
+        </div>
+        <div class="spell-count" id="sp-count"></div>
+      </div>
+    </section>
+
+    <!-- ===== 学习进度 ===== -->
+    <section id="view-progress" class="view">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num" id="st-total">0</div><div class="stat-label">总词数</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-mastered">0</div><div class="stat-label">已掌握</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-learning">0</div><div class="stat-label">学习中</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-wrong">0</div><div class="stat-label">错题本</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-accuracy">0%</div><div class="stat-label">总正确率</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="pg-grid">
+          <div>
+            <div class="pg-chart-title">近 7 天答题量</div>
+            <div class="pg-bars" id="pg-bars"></div>
+          </div>
+          <div class="pg-donut-wrap">
+            <div class="pg-donut" id="pg-donut"><span class="pg-donut-text" id="pg-donut-text">0%</span></div>
+            <div class="pg-donut-cap">词汇掌握率</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="pg-wrong-title">📕 错题本</div>
+        <ul class="pg-wrong-list" id="pg-wrong-list"></ul>
+        <div class="pg-footer">
+          <button class="btn danger small" id="pg-reset">清空全部学习数据</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/flashcard.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/spelling.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
