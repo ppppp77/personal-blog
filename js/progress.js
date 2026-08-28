@@ -85,6 +85,27 @@ const Progress = (() => {
 
   function wrongList() { return data.wrongBook; }
 
+  /* ===== 探索系统：掌握词数 = 下潜深度（海面 → 马里亚纳海沟 10909m） ===== */
+  const MAX_DEPTH = 10909;
+  const ZONES = [
+    { name: '阳光带', en: 'EPIPELAGIC', until: 200, rank: '表层观察员' },
+    { name: '暮光带', en: 'MESOPELAGIC', until: 1000, rank: '潜航学员' },
+    { name: '午夜带', en: 'BATHYPELAGIC', until: 4000, rank: '深海潜航员' },
+    { name: '深渊带', en: 'ABYSSOPELAGIC', until: 6000, rank: '深渊探索者' },
+    { name: '超深渊带', en: 'HADAL ZONE', until: MAX_DEPTH, rank: '海沟征服者' }
+  ];
+  function getDive() {
+    const s = getStats();
+    const depth = Math.round(s.mastered / s.total * MAX_DEPTH);
+    let zi = ZONES.findIndex(z => depth < z.until);
+    if (zi === -1) zi = ZONES.length - 1;
+    const zone = ZONES[zi];
+    const wordsToNext = zi < ZONES.length - 1
+      ? Math.max(0, Math.ceil(ZONES[zi + 1].until / MAX_DEPTH * s.total) - s.mastered)
+      : 0;
+    return { depth, zoneIndex: zi, zone, rank: zone.rank, wordsToNext, mastered: s.mastered, total: s.total };
+  }
+
   function getStats() {
     const total = WORD_DB.length;
     let mastered = 0, learning = 0, correct = 0, wrong = 0;
@@ -120,7 +141,13 @@ const Progress = (() => {
       bars: document.getElementById('pg-bars'),
       donut: document.getElementById('pg-donut'),
       donutText: document.getElementById('pg-donut-text'),
-      wrongListEl: document.getElementById('pg-wrong-list')
+      wrongListEl: document.getElementById('pg-wrong-list'),
+      diveMarker: document.getElementById('dive-marker'),
+      diveDepth: document.getElementById('dive-depth'),
+      diveZone: document.getElementById('dive-zone'),
+      diveRank: document.getElementById('dive-rank'),
+      diveNext: document.getElementById('dive-next'),
+      footerDepth: document.getElementById('ft-depth')
     };
   }
 
@@ -149,12 +176,23 @@ const Progress = (() => {
         <span class="bar-label">${d.date.slice(5)}</span>
       </div>`).join('');
 
-    // 掌握度环形图
+    // 掌握度环形图（深海主题配色）
     const p1 = (s.mastered / s.total) * 100;
     const p2 = (s.learning / s.total) * 100;
     els.donut.style.background =
-      `conic-gradient(#22c55e 0 ${p1}%, #f59e0b ${p1}% ${p1 + p2}%, #e5e9f0 ${p1 + p2}% 100%)`;
+      `conic-gradient(#34d399 0 ${p1}%, #fbbf24 ${p1}% ${p1 + p2}%, rgba(103,232,249,.13) ${p1 + p2}% 100%)`;
     els.donutText.textContent = Math.round(p1) + '%';
+
+    // 下潜状态仪表盘 + 页脚深度联动
+    const dive = getDive();
+    els.diveMarker.style.bottom = (dive.depth / MAX_DEPTH * 100) + '%';
+    els.diveDepth.textContent = '-' + dive.depth.toLocaleString() + 'm';
+    els.diveZone.textContent = '当前深度带 · ' + dive.zone.name + ' ' + dive.zone.en;
+    els.diveRank.textContent = '段位 · ' + dive.rank;
+    els.diveNext.textContent = dive.wordsToNext > 0
+      ? '再掌握 ' + dive.wordsToNext + ' 词下潜至「' + ZONES[dive.zoneIndex + 1].name + '」'
+      : '已达海沟最深处，整片词海任你遨游 🏆';
+    if (els.footerDepth) els.footerDepth.textContent = '-' + dive.depth + 'm';
 
     // 错题本
     if (!data.wrongBook.length) {
@@ -177,5 +215,5 @@ const Progress = (() => {
     );
   }
 
-  return { init, get, recordAnswer, markCard, removeWrong, wrongList, getStats, reset, render };
+  return { init, get, recordAnswer, markCard, removeWrong, wrongList, getStats, getDive, reset, render };
 })();

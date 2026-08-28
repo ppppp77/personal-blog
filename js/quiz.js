@@ -142,10 +142,11 @@ const Quiz = (() => {
     const s = Math.round(score / TOTAL * 100);
     els.final.textContent = s + ' 分';
     els.comment.textContent =
-      s >= 90 ? '太厉害了，六级词汇掌握得非常扎实！🏆' :
+      (s >= 90 ? '太厉害了，六级词汇掌握得非常扎实！🏆' :
       s >= 70 ? '表现不错，继续保持这个节奏！💪' :
       s >= 50 ? '刚好及格，多刷错题本会有明显提升。📖' :
-      '别灰心，回到单词卡片再过一轮吧。🔁';
+      '别灰心，回到单词卡片再过一轮吧。🔁')
+      + '｜本次下潜 +' + (score * 109) + 'm';
     els.wrongListEl.innerHTML = wrongQs.length
       ? wrongQs.map(q =>
           '<li><b>' + q.word.word + '</b> ' + q.word.phonetic + ' — ' + q.word.pos + ' ' + q.word.meaning +

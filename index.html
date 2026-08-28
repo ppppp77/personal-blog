@@ -4,11 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>英语六级学习助手</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3.1.0">
 </head>
 <body>
+  <!-- 深海背景：辉光洋流 + 像素点阵 -->
+  <div class="ocean-bg" aria-hidden="true">
+    <div class="ocean-glow g1"></div>
+    <div class="ocean-glow g2"></div>
+    <div class="pixel-grid"></div>
+  </div>
+
   <header>
-    <div class="logo">📚 英语六级学习助手</div>
+    <div class="brand">
+      <pre class="atom-logo" aria-hidden="true">
+ ·   .-~~~-.   ·
+  · (   +   ) ·
+ o--(   ( )  )--o
+  · (   +   ) ·
+ ·   `-~~~-'   ·</pre>
+      <div class="brand-text">
+        <div class="logo">英语六级学习助手</div>
+        <div class="tagline">// DEEP·SEA CET-6 TERMINAL <b>v3.1</b> · EXPEDITION</div>
+      </div>
+    </div>
     <nav>
       <button class="active" data-view="flashcard">单词卡片</button>
       <button data-view="quiz">选择题测验</button>
@@ -20,6 +38,15 @@
   <main>
     <!-- ===== 单词卡片 ===== -->
     <section id="view-flashcard" class="view active">
+      <div class="card beacon-card" id="beacon-card">
+        <div class="beacon-label">📡 今日深海信标 · DAILY BEACON</div>
+        <div class="beacon-body">
+          <div class="beacon-word" id="beacon-word"></div>
+          <div class="beacon-meaning" id="beacon-meaning"></div>
+          <button class="btn ghost small" id="beacon-goto">追踪此信号 →</button>
+        </div>
+      </div>
+
       <div class="fc-toolbar">
         <select id="fc-filter">
           <option value="all">全部词汇</option>
@@ -36,10 +63,11 @@
       <div class="fc-scene">
         <div class="fc-card" id="fc-card">
           <div class="fc-face front">
+            <div class="fc-discovery" id="fc-discovery" hidden>◉ 新发现 · NEW</div>
             <span class="fc-status-chip" id="fc-chip">＋ 新词</span>
             <div class="fc-word" id="fc-word">word</div>
             <div class="phonetic" id="fc-phonetic">/fəˈnetɪk/</div>
-            <button class="btn ghost small" id="fc-speak">🔊 发音</button>
+            <button class="btn ghost small" id="fc-speak">🔊 声呐发音</button>
           </div>
           <div class="fc-face back">
             <div class="fc-meaning" id="fc-meaning"></div>
@@ -56,6 +84,7 @@
       </div>
 
       <div class="fc-progress"><div class="fc-progress-inner" id="fc-progress-bar" style="width:0%"></div></div>
+      <div class="fc-meta" id="fc-bar-text"></div>
       <div class="fc-meta" id="fc-meta"></div>
       <p class="fc-hint">点击卡片翻面 · 空格键翻面 · ←/→ 键切换</p>
     </section>
@@ -128,6 +157,28 @@
       </div>
 
       <div class="card" style="margin-bottom:20px;">
+        <div class="pg-chart-title">下潜状态 · DIVE STATUS</div>
+        <div class="dive-wrap">
+          <div class="dive-gauge" aria-hidden="true">
+            <div class="dive-band b0"><span>0m · 阳光带</span></div>
+            <div class="dive-band b1"><span>200m · 暮光带</span></div>
+            <div class="dive-band b2"><span>-1000m · 午夜带</span></div>
+            <div class="dive-band b3"><span>-4000m · 深渊带</span></div>
+            <div class="dive-band b4"><span>-6000m · 超深渊</span></div>
+            <div class="dive-marker" id="dive-marker">
+              <span class="dive-tri"></span><span class="dive-line"></span>
+            </div>
+          </div>
+          <div class="dive-info">
+            <div class="dive-depth" id="dive-depth">-0m</div>
+            <div class="dive-zone" id="dive-zone"></div>
+            <div class="dive-rank" id="dive-rank"></div>
+            <div class="dive-next" id="dive-next"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
         <div class="pg-grid">
           <div>
             <div class="pg-chart-title">近 7 天答题量</div>
@@ -150,11 +201,15 @@
     </section>
   </main>
 
-  <script src="js/data.js"></script>
-  <script src="js/progress.js"></script>
-  <script src="js/flashcard.js"></script>
-  <script src="js/quiz.js"></script>
-  <script src="js/spelling.js"></script>
-  <script src="js/app.js"></script>
+  <footer class="sys-footer" aria-hidden="true">
+    [ SYS:ONLINE ]──[ WORDS:6662 ]──[ DEPTH:<span id="ft-depth">-0m</span> ]──[ MODE:DEEP·SEA ]<span class="cursor">▊</span>
+  </footer>
+
+  <script src="js/data.js?v=3.1.0"></script>
+  <script src="js/progress.js?v=3.1.0"></script>
+  <script src="js/flashcard.js?v=3.1.0"></script>
+  <script src="js/quiz.js?v=3.1.0"></script>
+  <script src="js/spelling.js?v=3.1.0"></script>
+  <script src="js/app.js?v=3.1.0"></script>
 </body>
 </html>

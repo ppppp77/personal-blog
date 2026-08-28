@@ -10,6 +10,32 @@ const Flashcard = (() => {
     return r ? r.status : 'new';
   }
 
+  /* ===== 每日深海信标：按日期确定性抽取，全日同词 ===== */
+  function dailyBeacon() {
+    const d = new Date();
+    const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+    const w = WORD_DB[seed % WORD_DB.length];
+    els.beaconWord.textContent = w.word;
+    els.beaconWord.dataset.id = w.id;
+    els.beaconMeaning.innerHTML = '<span class="pos">' + w.pos + '</span>' + w.meaning +
+      ' <span class="phonetic">' + w.phonetic + '</span>';
+  }
+
+  function gotoBeacon() {
+    const id = Number(els.beaconWord.dataset.id);
+    const i = deck.findIndex(w => w.id === id);
+    if (i > -1) { idx = i; render(); }
+    speak(els.beaconWord.textContent);
+  }
+
+  // 声呐按钮波纹
+  function sonarPing() {
+    els.speak.classList.remove('pinging');
+    void els.speak.offsetWidth; // 重启动画
+    els.speak.classList.add('pinging');
+    setTimeout(() => els.speak.classList.remove('pinging'), 700);
+  }
+
   function buildDeck() {
     const f = els.filter.value;
     let pool = WORD_DB.filter(w => f === 'all' || (f === 'cet4' ? w.level === 1 : w.level === 2));
@@ -39,7 +65,14 @@ const Flashcard = (() => {
     const st = statusOf(w.id);
     els.chip.textContent = st === 'mastered' ? '✓ 已掌握' : st === 'learning' ? '↻ 学习中' : '＋ 新词';
     els.chip.className = 'fc-status-chip ' + st;
+    // 首次见到的词 → 新发现标记
+    els.discovery.hidden = !Progress.get(w.id) ? false : true;
     els.meta.textContent = '第 ' + (idx + 1) + ' / ' + deck.length + ' 张';
+    // ASCII 像素进度读数
+    const cells = 16;
+    const filled = Math.round((idx + 1) / deck.length * cells);
+    els.barText.textContent = '▮'.repeat(filled) + '░'.repeat(cells - filled) + ' ' +
+      Math.round((idx + 1) / deck.length * 100) + '%';
     els.bar.style.width = ((idx + 1) / deck.length * 100) + '%';
   }
 
@@ -73,11 +106,19 @@ const Flashcard = (() => {
       example: document.getElementById('fc-example'),
       chip: document.getElementById('fc-chip'),
       meta: document.getElementById('fc-meta'),
-      bar: document.getElementById('fc-progress-bar')
+      bar: document.getElementById('fc-progress-bar'),
+      barText: document.getElementById('fc-bar-text'),
+      discovery: document.getElementById('fc-discovery'),
+      speak: document.getElementById('fc-speak'),
+      beaconWord: document.getElementById('beacon-word'),
+      beaconMeaning: document.getElementById('beacon-meaning')
     };
+    dailyBeacon();
+    document.getElementById('beacon-goto').addEventListener('click', gotoBeacon);
     els.card.addEventListener('click', flip);
-    document.getElementById('fc-speak').addEventListener('click', e => {
+    els.speak.addEventListener('click', e => {
       e.stopPropagation();
+      sonarPing();
       speak(deck[idx].word);
     });
     document.getElementById('fc-prev').addEventListener('click', () => move(-1));

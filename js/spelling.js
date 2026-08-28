@@ -32,7 +32,7 @@ const Spelling = (() => {
       ' <span class="phonetic">' + current.phonetic + '</span>';
     els.exampleWrap.hidden = true;
     els.result.hidden = true;
-    els.count.textContent = '已练习 ' + round + ' 题';
+    els.count.textContent = '已探测 ' + round + ' 个信号';
     // 自动朗读一遍
     setTimeout(() => speak(current.word), 300);
     els.input.focus();
@@ -60,7 +60,7 @@ const Spelling = (() => {
     els.nextBtn.hidden = false;
     els.result.hidden = false;
     els.result.className = 'spell-result ' + (ok ? 'good' : 'bad');
-    els.result.textContent = ok ? '✅ 拼写正确！' : '❌ 正确拼写是 ' + current.word;
+    els.result.textContent = ok ? '✅ 坐标已标记！' : '❌ 信号丢失 · 正确拼写是 ' + current.word;
     els.exampleWrap.hidden = !current.example;
     els.example.innerHTML = current.example ? '<i>' + esc(current.example) + '</i>' : '';
     if (!ok) speak(current.word);
