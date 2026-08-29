@@ -46,6 +46,12 @@
 - 数据持久化使用 **LocalStorage**（键名 `cet6_progress_v1`），清空浏览器数据会丢失进度
 - `js/data.js`（约 1.6 MB）由 `tools/build-dict.js` 从原始词书数据生成，请勿手工编辑生成结果
 
+## 隐私与安全
+
+- **数据不出本机**：所有学习进度仅存于浏览器 LocalStorage，本应用无后端、无统计、无跟踪，不上传任何数据
+- **推送门禁**：`git push` 会自动执行 `tools/hooks/pre-push` 安全审查，拦截 API 密钥、私钥、GitHub/AWS 令牌、本机绝对路径、会话 ID 及敏感类型文件（`.env`、`.pem`、密钥文件等）；确认为误报时可用 `git push --no-verify` 单次跳过
+- 提交身份使用 GitHub noreply 邮箱，避免真实邮箱被采集
+
 ## 词库来源与重建
 
 原始数据来自开源项目 [kajweb/dict](https://github.com/kajweb/dict)（有道考神团队四级/六级真题核心词，含音标、释义、真题例句和真题选择题）。
