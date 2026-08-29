@@ -27,7 +27,8 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   fi
 
   # 1) 扫描本次推送涉及的提交内容（含新增提交的完整补丁，能抓到"加了又删"的密钥）
-  hits=$(git log -p "$range" 2>/dev/null | grep -a -n -E -e "$PATTERNS" | head -5)
+  #    排除门禁脚本自身（受信任代码，避免规则字面量自匹配误报）
+  hits=$(git log -p "$range" -- . ':(exclude)tools/hooks' 2>/dev/null | grep -a -n -E -e "$PATTERNS" | head -5)
   if [ -n "$hits" ]; then
     echo ""
     echo "❌ [安全门禁] 疑似密钥/令牌泄露，推送被拦截："
@@ -37,8 +38,8 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     fail=1
   fi
 
-  # 2) 扫描新 tip 树中的本机路径 / 会话 ID
-  path_hits=$(git grep -I -n -E "$PATH_PATTERNS" "$local_sha" -- . 2>/dev/null | head -5)
+  # 2) 扫描新 tip 树中的本机路径 / 会话 ID（同样排除门禁自身）
+  path_hits=$(git grep -I -n -e "$PATH_PATTERNS" "$local_sha" -- . ':(exclude)tools/hooks' 2>/dev/null | head -5)
   if [ -n "$path_hits" ]; then
     echo ""
     echo "❌ [安全门禁] 发现本机路径/会话标识泄露，推送被拦截："
